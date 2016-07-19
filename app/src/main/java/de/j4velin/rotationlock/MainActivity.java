@@ -1,8 +1,10 @@
 package de.j4velin.rotationlock;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
@@ -11,9 +13,12 @@ import android.widget.TextView;
 public class MainActivity extends Activity {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if (Build.VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(this)) {
+            askForPermission();
+        }
     }
 
     @Override
@@ -21,19 +26,24 @@ public class MainActivity extends Activity {
         super.onResume();
         TextView text = (TextView) findViewById(R.id.text);
 
-        if (!Settings.canDrawOverlays(this)) {
-            text.setText("App requires permission to lock the screen. Click here to grant that permission");
+        if (Build.VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(this)) {
+            text.setText(R.string.require_permission);
             text.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View view) {
-                    Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                            Uri.parse("package:" + getPackageName()));
-                    startActivityForResult(intent, 1);
+                    askForPermission();
                 }
             });
         } else {
-            text.setText("The app will lock (most of) the screen, when you tilt your device for more then 45°. The screen will turn dark, to indicate that touch events are blocked. Rotate your device back in portrait mode to unlock the screen again.\n\nNote: Not everything can be blocked - the status bar and on-screen navigation buttons are still accessable!\n\nTo disable the automatic screen lock, simply click on the apps notification.");
+            text.setText(R.string.intro);
             startService(new Intent(this, Lockservice.class));
         }
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private void askForPermission() {
+        Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                Uri.parse("package:" + getPackageName()));
+        startActivityForResult(intent, 1);
     }
 }

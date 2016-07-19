@@ -96,7 +96,7 @@ public class Lockservice extends Service implements View.OnTouchListener {
                 builder.setAutoCancel(false);
                 builder.setSmallIcon(Icon.createWithResource(this, R.mipmap.ic_launcher));
                 builder.addAction(new Notification.Action.Builder(
-                        Icon.createWithResource(this, R.drawable.ic_close_black_24dp), "Stop and remove",
+                        Icon.createWithResource(this, R.drawable.ic_close_black_24dp), getString(R.string.stop_and_remove),
                         PendingIntent
                                 .getService(this, 0, new Intent(this, Lockservice.class).setAction("destroy"),
                                         0)).build());
@@ -108,8 +108,8 @@ public class Lockservice extends Service implements View.OnTouchListener {
     }
 
     private void enable() {
-        builder.setContentTitle("Lock service enabled");
-        builder.setContentText("Click to disable");
+        builder.setContentTitle(getString(R.string.service_enabled));
+        builder.setContentText(getString(R.string.click_to_disable));
         builder.setContentIntent(PendingIntent
                 .getService(this, 0, new Intent(this, Lockservice.class).setAction("stop"),
                         0));
@@ -127,8 +127,8 @@ public class Lockservice extends Service implements View.OnTouchListener {
             } catch (Exception e) {
             }
         }
-        builder.setContentTitle("Lock service disabled");
-        builder.setContentText("Click to enable");
+        builder.setContentTitle(getString(R.string.service_disabled));
+        builder.setContentText(getString(R.string.click_to_enable));
         builder.setContentIntent(PendingIntent
                 .getService(this, 0, new Intent(this, Lockservice.class).setAction("start"),
                         0));
