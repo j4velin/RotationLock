@@ -1,10 +1,13 @@
 package de.j4velin.rotationlock;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
+import android.graphics.drawable.Icon;
 import android.os.IBinder;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -24,6 +27,7 @@ public class Lockservice extends Service implements View.OnTouchListener {
                             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                     PixelFormat.RGBA_8888);
     private static OrientationListener listener;
+    private static Notification.Builder builder;
 
     static {
         p.gravity = Gravity.TOP | Gravity.LEFT;
@@ -67,38 +71,79 @@ public class Lockservice extends Service implements View.OnTouchListener {
     public int onStartCommand(final Intent intent, int flags, int startId) {
 
         if (intent != null && intent.getAction() != null && intent.getAction().equals("stop")) {
+            disable();
+        } else if (intent != null && intent.getAction() != null && intent.getAction().equals("start")) {
+            enable();
+        } else if (intent != null && intent.getAction() != null && intent.getAction().equals("destroy")) {
             stopSelf();
             return START_NOT_STICKY;
-        }
+        } else {
 
-        if (v == null) {
-            v = new View(this);
-            v.setBackgroundColor(Color.argb(200, 0, 0, 0));
-            v.setOnTouchListener(this);
-        }
+            if (v == null) {
+                v = new View(this);
+                v.setBackgroundColor(Color.argb(200, 0, 0, 0));
+                v.setOnTouchListener(this);
+            }
 
-        if (listener == null) {
-            listener = new OrientationListener(this);
-            listener.enable();
-        }
+            if (listener == null) {
+                listener = new OrientationListener(this);
+                listener.enable();
+            }
 
+            if (builder == null) {
+                builder = new Notification.Builder(this);
+                builder.setOngoing(true);
+                builder.setAutoCancel(false);
+                builder.setSmallIcon(Icon.createWithResource(this, R.mipmap.ic_launcher));
+                builder.addAction(new Notification.Action.Builder(
+                        Icon.createWithResource(this, R.drawable.ic_close_black_24dp), "Stop and remove",
+                        PendingIntent
+                                .getService(this, 0, new Intent(this, Lockservice.class).setAction("destroy"),
+                                        0)).build());
+            }
+
+            enable();
+        }
         return START_STICKY;
     }
 
+    private void enable() {
+        builder.setContentTitle("Lock service enabled");
+        builder.setContentText("Click to disable");
+        builder.setContentIntent(PendingIntent
+                .getService(this, 0, new Intent(this, Lockservice.class).setAction("stop"),
+                        0));
+        builder.setPriority(Notification.PRIORITY_LOW);
+        startForeground(1, builder.build());
+    }
 
-    @Override
-    public void onDestroy() {
+    private void disable() {
         if (listener != null) {
             listener.disable();
-            listener = null;
         }
         if (v != null) {
             try {
                 ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).removeView(v);
             } catch (Exception e) {
             }
-            v = null;
         }
+        builder.setContentTitle("Lock service disabled");
+        builder.setContentText("Click to enable");
+        builder.setContentIntent(PendingIntent
+                .getService(this, 0, new Intent(this, Lockservice.class).setAction("start"),
+                        0));
+        builder.setPriority(Notification.PRIORITY_MIN);
+        startForeground(1, builder.build());
+    }
+
+
+    @Override
+    public void onDestroy() {
+        disable();
+        stopForeground(true);
+        listener = null;
+        v = null;
+        builder = null;
         super.onDestroy();
     }
 }
