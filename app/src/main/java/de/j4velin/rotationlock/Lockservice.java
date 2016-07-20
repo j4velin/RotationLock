@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Icon;
+import android.os.Build;
 import android.os.IBinder;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -16,6 +17,8 @@ import android.view.View;
 import android.view.WindowManager;
 
 public class Lockservice extends Service implements View.OnTouchListener {
+
+    private final static String TAG = "RotationLock";
 
     private static boolean isShown;
     private static View v;
@@ -44,11 +47,13 @@ public class Lockservice extends Service implements View.OnTouchListener {
         public void onOrientationChanged(int rotation) {
             if (rotation > 45 && rotation < 315) {
                 if (!isShown) {
+                    if (BuildConfig.DEBUG) android.util.Log.d(TAG, "rotation: " + rotation);
                     ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).addView(v, p);
                     isShown = true;
                 }
             } else if (isShown) {
                 try {
+                    if (BuildConfig.DEBUG) android.util.Log.d(TAG, "rotation: " + rotation);
                     ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).removeView(v);
                 } catch (Exception e) {
                 }
@@ -70,44 +75,61 @@ public class Lockservice extends Service implements View.OnTouchListener {
     @Override
     public int onStartCommand(final Intent intent, int flags, int startId) {
 
-        if (intent != null && intent.getAction() != null && intent.getAction().equals("stop")) {
-            disable();
-        } else if (intent != null && intent.getAction() != null && intent.getAction().equals("start")) {
-            enable();
-        } else if (intent != null && intent.getAction() != null && intent.getAction().equals("destroy")) {
-            stopSelf();
-            return START_NOT_STICKY;
+        if (intent != null && intent.getAction() != null) {
+            String action = intent.getAction();
+            if (action.equals("stop")) {
+                disable();
+            } else if (action.equals("start")) {
+                enable();
+            } else if (action.equals("destroy")) {
+                stopSelf();
+                return START_NOT_STICKY;
+            }
         } else {
-
-            if (v == null) {
-                v = new View(this);
-                v.setBackgroundColor(Color.argb(200, 0, 0, 0));
-                v.setOnTouchListener(this);
-            }
-
-            if (listener == null) {
-                listener = new OrientationListener(this);
-                listener.enable();
-            }
-
-            if (builder == null) {
-                builder = new Notification.Builder(this);
-                builder.setOngoing(true);
-                builder.setAutoCancel(false);
-                builder.setSmallIcon(Icon.createWithResource(this, R.mipmap.ic_launcher));
-                builder.addAction(new Notification.Action.Builder(
-                        Icon.createWithResource(this, R.drawable.ic_close_black_24dp), getString(R.string.stop_and_remove),
-                        PendingIntent
-                                .getService(this, 0, new Intent(this, Lockservice.class).setAction("destroy"),
-                                        0)).build());
-            }
-
+            init();
             enable();
         }
         return START_STICKY;
     }
 
+    private void init() {
+        if (BuildConfig.DEBUG) android.util.Log.d(TAG, "init");
+        if (v == null) {
+            v = new View(this);
+            v.setBackgroundColor(Color.argb(200, 0, 0, 0));
+            v.setOnTouchListener(this);
+        }
+
+        if (listener == null) {
+            listener = new OrientationListener(this);
+        }
+
+        if (builder == null) {
+            builder = new Notification.Builder(this);
+            builder.setOngoing(true);
+            builder.setAutoCancel(false);
+            builder.setSmallIcon(R.mipmap.ic_launcher);
+            if (Build.VERSION.SDK_INT >= 23) {
+                builder.addAction(new Notification.Action.Builder(
+                        Icon.createWithResource(this, R.drawable.ic_close_black_24dp), getString(R.string.stop_and_remove),
+                        PendingIntent
+                                .getService(this, 0, new Intent(this, Lockservice.class).setAction("destroy"),
+                                        0)).build());
+            } else {
+                builder.addAction(R.drawable.ic_close_black_24dp, getString(R.string.stop_and_remove),
+                        PendingIntent
+                                .getService(this, 0, new Intent(this, Lockservice.class).setAction("destroy"),
+                                        0));
+            }
+        }
+    }
+
     private void enable() {
+        if (BuildConfig.DEBUG) android.util.Log.d(TAG, "enable");
+        if (listener == null) {
+            init();
+        }
+        listener.enable();
         builder.setContentTitle(getString(R.string.service_enabled));
         builder.setContentText(getString(R.string.click_to_disable));
         builder.setContentIntent(PendingIntent
@@ -118,6 +140,7 @@ public class Lockservice extends Service implements View.OnTouchListener {
     }
 
     private void disable() {
+        if (BuildConfig.DEBUG) android.util.Log.d(TAG, "disable");
         if (listener != null) {
             listener.disable();
         }
@@ -139,6 +162,7 @@ public class Lockservice extends Service implements View.OnTouchListener {
 
     @Override
     public void onDestroy() {
+        if (BuildConfig.DEBUG) android.util.Log.d(TAG, "destroy");
         disable();
         stopForeground(true);
         listener = null;

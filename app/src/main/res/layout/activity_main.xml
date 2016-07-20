@@ -1,60 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="de.j4velin.rotationlock.MainActivity">
 
-    <TextView
-        android:id="@+id/text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:padding="10dp"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <ImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:id="@+id/imageView"
-        android:layout_alignParentTop="false"
-        android:layout_alignParentStart="false"
-        android:src="@drawable/unlocked"
-        android:layout_marginLeft="10dp"
-        android:layout_below="@+id/text"
-        android:layout_marginTop="10dp" />
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:padding="10dp"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <ImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:id="@+id/imageView2"
-        android:layout_below="@+id/imageView"
-        android:layout_alignParentStart="true"
-        android:src="@drawable/locked"
-        android:layout_marginLeft="10dp" />
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_alignParentStart="false"
+            android:layout_alignParentTop="false"
+            android:layout_below="@+id/text"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/unlocked" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="100dp"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="unlocked"
-        android:id="@+id/textView"
-        android:gravity="center_vertical"
-        android:layout_alignTop="@+id/imageView"
-        android:textStyle="bold"
-        android:layout_toRightOf="@+id/imageView" />
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/imageView"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/locked" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="100dp"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="locked"
-        android:id="@+id/textView2"
-        android:layout_alignParentTop="false"
-        android:gravity="center_vertical"
-        android:layout_alignTop="@+id/imageView2"
-        android:textStyle="bold"
-        android:layout_toRightOf="@+id/imageView2" />
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:layout_alignTop="@+id/imageView"
+            android:layout_toRightOf="@+id/imageView"
+            android:gravity="center_vertical"
+            android:text="unlocked"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textStyle="bold" />
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:layout_alignParentTop="false"
+            android:layout_alignTop="@+id/imageView2"
+            android:layout_toRightOf="@+id/imageView2"
+            android:gravity="center_vertical"
+            android:text="locked"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+</ScrollView>
