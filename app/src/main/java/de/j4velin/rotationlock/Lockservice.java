@@ -15,20 +15,25 @@ import android.view.MotionEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 public class Lockservice extends Service implements View.OnTouchListener {
 
     private final static String TAG = "RotationLock";
-
-    private static boolean isShown;
-    private static View v;
+    private final static long MIN_TIME_DIFF = 1000;
+    private final static int VIEW_FLAGS = View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
     private final static WindowManager.LayoutParams p =
             new WindowManager.LayoutParams(WindowManager.LayoutParams.MATCH_PARENT,
                     WindowManager.LayoutParams.MATCH_PARENT,
                     WindowManager.LayoutParams.TYPE_SYSTEM_ALERT,
                     WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN |
-                            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS |
+                            WindowManager.LayoutParams.FLAG_FULLSCREEN,
                     PixelFormat.RGBA_8888);
+
+    private static long lastChange = 0;
+    private static boolean isLocked;
+    private static View v;
     private static OrientationListener listener;
     private static Notification.Builder builder;
 
@@ -46,18 +51,22 @@ public class Lockservice extends Service implements View.OnTouchListener {
         @Override
         public void onOrientationChanged(int rotation) {
             if (rotation > 45 && rotation < 315) {
-                if (!isShown) {
+                if (!isLocked && System.currentTimeMillis() - lastChange > MIN_TIME_DIFF) {
                     if (BuildConfig.DEBUG) android.util.Log.d(TAG, "rotation: " + rotation);
                     ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).addView(v, p);
-                    isShown = true;
+                    v.setSystemUiVisibility(VIEW_FLAGS);
+                    isLocked = true;
+                    lastChange = System.currentTimeMillis();
                 }
-            } else if (isShown) {
+            } else if (isLocked && System.currentTimeMillis() - lastChange > MIN_TIME_DIFF) {
                 try {
                     if (BuildConfig.DEBUG) android.util.Log.d(TAG, "rotation: " + rotation);
+                    v.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
                     ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).removeView(v);
                 } catch (Exception e) {
                 }
-                isShown = false;
+                isLocked = false;
+                lastChange = System.currentTimeMillis();
             }
         }
     }
@@ -77,6 +86,10 @@ public class Lockservice extends Service implements View.OnTouchListener {
 
         if (intent != null && intent.getAction() != null) {
             String action = intent.getAction();
+            if (isLocked) {
+                Toast.makeText(this, "Please rotate into portrait mode first", Toast.LENGTH_SHORT).show();
+                return START_STICKY;
+            }
             if (action.equals("stop")) {
                 disable();
             } else if (action.equals("start")) {
@@ -149,6 +162,7 @@ public class Lockservice extends Service implements View.OnTouchListener {
                 ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).removeView(v);
             } catch (Exception e) {
             }
+            isLocked = false;
         }
         builder.setContentTitle(getString(R.string.service_disabled));
         builder.setContentText(getString(R.string.click_to_enable));
