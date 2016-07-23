@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">RotationLock</string>
     <string name="require_permission">App requires permission to lock the screen. Click here to grant that permission</string>
-    <string name="intro">The app will lock (most of) the screen, when you tilt your device for more then 45°. The screen will turn dark, to indicate that touch events are blocked. Rotate your device back in portrait mode to unlock the screen again.\n\nNote: Not everything can be blocked - the status bar and on-screen navigation buttons are still accessable!\n\nTo disable the automatic screen lock, simply click on the apps notification.</string>
+    <string name="intro">The app will lock (most of) the screen, when you tilt your device for more then 75°. The screen will turn dark, to indicate that touch events are blocked. Rotate your device back in portrait mode to unlock the screen again.\n\nNote: Not everything can be blocked - the status bar and on-screen navigation buttons are still accessable!\n\nTo disable the automatic screen lock, simply click on the apps notification.</string>
     <string name="service_enabled">Lock service enabled</string>
     <string name="click_to_disable">Click to disable</string>
     <string name="service_disabled">Lock service disabled</string>

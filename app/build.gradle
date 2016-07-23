@@ -9,11 +9,11 @@ android {
     }
 
     defaultConfig {
-        applicationId "de.j4velin.rotationlock"
+        applicationId "de.j4velin.pokelockscreen"
         minSdkVersion 19
         targetSdkVersion 24
-        versionCode 103
-        versionName "1.0.3"
+        versionCode 105
+        versionName "1.0.5"
     }
     buildTypes {
         release {

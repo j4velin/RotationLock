@@ -44,29 +44,30 @@ public class Lockservice extends Service implements View.OnTouchListener {
 
     private class OrientationListener extends OrientationEventListener {
 
-        public OrientationListener(Context context) {
+        public OrientationListener(final Context context) {
             super(context);
         }
 
         @Override
         public void onOrientationChanged(int rotation) {
-            if (rotation > 45 && rotation < 315) {
-                if (!isLocked && System.currentTimeMillis() - lastChange > MIN_TIME_DIFF) {
-                    if (BuildConfig.DEBUG) android.util.Log.d(TAG, "rotation: " + rotation);
-                    ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).addView(v, p);
-                    v.setSystemUiVisibility(VIEW_FLAGS);
-                    isLocked = true;
-                    lastChange = System.currentTimeMillis();
-                }
-            } else if (isLocked && System.currentTimeMillis() - lastChange > MIN_TIME_DIFF) {
-                try {
-                    if (BuildConfig.DEBUG) android.util.Log.d(TAG, "rotation: " + rotation);
-                    v.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
-                    ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).removeView(v);
-                } catch (Exception e) {
-                }
-                isLocked = false;
+            if (rotation > ORIENTATION_UNKNOWN && System.currentTimeMillis() - lastChange > MIN_TIME_DIFF) {
                 lastChange = System.currentTimeMillis();
+                if (rotation > 75 && rotation < 285) {
+                    if (!isLocked) {
+                        if (BuildConfig.DEBUG) android.util.Log.d(TAG, "rotation: " + rotation);
+                        ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).addView(v, p);
+                        v.setSystemUiVisibility(VIEW_FLAGS);
+                        isLocked = true;
+                    }
+                } else if (isLocked) {
+                    if (BuildConfig.DEBUG) android.util.Log.d(TAG, "rotation: " + rotation);
+                    try {
+                        v.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+                        ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).removeView(v);
+                    } catch (Exception e) {
+                    }
+                    isLocked = false;
+                }
             }
         }
     }
