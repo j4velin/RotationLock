@@ -21,11 +21,10 @@ public class Lockservice extends Service implements View.OnTouchListener {
 
     private final static String TAG = "RotationLock";
     private final static long MIN_TIME_DIFF = 1000;
-    private final static int VIEW_FLAGS = View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
     private final static WindowManager.LayoutParams p =
             new WindowManager.LayoutParams(WindowManager.LayoutParams.MATCH_PARENT,
                     WindowManager.LayoutParams.MATCH_PARENT,
-                    WindowManager.LayoutParams.TYPE_SYSTEM_ALERT,
+                    WindowManager.LayoutParams.TYPE_SYSTEM_ERROR,
                     WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN |
                             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS |
                             WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -56,13 +55,11 @@ public class Lockservice extends Service implements View.OnTouchListener {
                     if (!isLocked) {
                         if (BuildConfig.DEBUG) android.util.Log.d(TAG, "rotation: " + rotation);
                         ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).addView(v, p);
-                        v.setSystemUiVisibility(VIEW_FLAGS);
                         isLocked = true;
                     }
                 } else if (isLocked) {
                     if (BuildConfig.DEBUG) android.util.Log.d(TAG, "rotation: " + rotation);
                     try {
-                        v.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
                         ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).removeView(v);
                     } catch (Exception e) {
                     }
