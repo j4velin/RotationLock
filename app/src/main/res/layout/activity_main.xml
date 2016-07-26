@@ -24,7 +24,7 @@
             android:layout_height="100dp"
             android:layout_alignParentStart="false"
             android:layout_alignParentTop="false"
-            android:layout_below="@+id/text"
+            android:layout_below="@+id/wakelock"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
             android:src="@drawable/unlocked" />
@@ -45,7 +45,7 @@
             android:layout_alignTop="@+id/imageView"
             android:layout_toRightOf="@+id/imageView"
             android:gravity="center_vertical"
-            android:text="unlocked"
+            android:text="@string/unlocked"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textStyle="bold" />
 
@@ -57,9 +57,19 @@
             android:layout_alignTop="@+id/imageView2"
             android:layout_toRightOf="@+id/imageView2"
             android:gravity="center_vertical"
-            android:text="locked"
+            android:text="@string/locked"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textStyle="bold" />
+
+        <CheckBox
+            android:id="@+id/wakelock"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/text"
+            android:padding="5dp"
+            android:text="@string/wakelock"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
     </RelativeLayout>
 </ScrollView>

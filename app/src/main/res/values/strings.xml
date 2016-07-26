@@ -7,4 +7,7 @@
     <string name="service_disabled">Lock service disabled</string>
     <string name="click_to_enable">Click to enable</string>
     <string name="stop_and_remove">Stop and remove</string>
+    <string name="wakelock">Keep screen on while locked</string>
+    <string name="locked">locked</string>
+    <string name="unlocked">unlocked</string>
 </resources>

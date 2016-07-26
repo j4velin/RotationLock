@@ -20,14 +20,16 @@ import android.widget.Toast;
 public class Lockservice extends Service implements View.OnTouchListener {
 
     private final static String TAG = "RotationLock";
+
     private final static long MIN_TIME_DIFF = 1000;
+    private final static int WINDOW_FLAGS = WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN |
+            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS |
+            WindowManager.LayoutParams.FLAG_FULLSCREEN;
     private final static WindowManager.LayoutParams p =
             new WindowManager.LayoutParams(WindowManager.LayoutParams.MATCH_PARENT,
                     WindowManager.LayoutParams.MATCH_PARENT,
                     WindowManager.LayoutParams.TYPE_SYSTEM_ERROR,
-                    WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN |
-                            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS |
-                            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WINDOW_FLAGS,
                     PixelFormat.RGBA_8888);
 
     private static long lastChange = 0;
@@ -109,6 +111,12 @@ public class Lockservice extends Service implements View.OnTouchListener {
             v = new View(this);
             v.setBackgroundColor(Color.argb(200, 0, 0, 0));
             v.setOnTouchListener(this);
+        }
+
+        if (getSharedPreferences("settings", MODE_PRIVATE).getBoolean("wakelock", true)) {
+            p.flags = WINDOW_FLAGS | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
+        } else {
+            p.flags = WINDOW_FLAGS;
         }
 
         if (listener == null) {

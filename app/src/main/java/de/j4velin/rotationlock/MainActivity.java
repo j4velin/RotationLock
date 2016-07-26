@@ -8,6 +8,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
@@ -19,6 +21,15 @@ public class MainActivity extends Activity {
         if (Build.VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(this)) {
             askForPermission();
         }
+        CheckBox wakelock = (CheckBox) findViewById(R.id.wakelock);
+        wakelock.setChecked(getSharedPreferences("settings", MODE_PRIVATE).getBoolean("wakelock", true));
+        wakelock.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(final CompoundButton compoundButton, boolean checked) {
+                getSharedPreferences("settings", MODE_PRIVATE).edit().putBoolean("wakelock", checked).apply();
+                startService(new Intent(MainActivity.this, Lockservice.class));
+            }
+        });
     }
 
     @Override
