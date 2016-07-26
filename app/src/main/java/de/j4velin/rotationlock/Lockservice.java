@@ -119,7 +119,7 @@ public class Lockservice extends Service implements View.OnTouchListener {
             builder = new Notification.Builder(this);
             builder.setOngoing(true);
             builder.setAutoCancel(false);
-            builder.setSmallIcon(R.mipmap.ic_launcher);
+            builder.setSmallIcon(R.drawable.ic_notification);
             if (Build.VERSION.SDK_INT >= 23) {
                 builder.addAction(new Notification.Action.Builder(
                         Icon.createWithResource(this, R.drawable.ic_close_black_24dp), getString(R.string.stop_and_remove),
