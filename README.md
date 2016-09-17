@@ -1,4 +1,7 @@
 # RotationLock
+
+[![Build Status](https://travis-ci.org/j4velin/RotationLock.svg?branch=master)](https://travis-ci.org/j4velin/RotationLock)
+
 This app is kind of a <b>lockscreen</b>: It prevents accidental screen touches when the screen is on. It uses the devices rotation sensor to automatically lock or unlock the device: In portrait mode, you can use your device as usual but when tilted for more then 75° (in both directions), it will overlay the current screen with a touch-consuming fullscreen layer.
 
 The intention of this app were augmented reality games: Some of these apps need to run in the foreground and keep the display on while the user keeps moving. However, putting your device in your pocket with the display kept on might trigger all kind of accidental screen touches...
