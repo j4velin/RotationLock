@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Icon;
@@ -106,14 +107,19 @@ public class Lockservice extends Service implements View.OnTouchListener {
     }
 
     private void init() {
-        if (BuildConfig.DEBUG) android.util.Log.d(TAG, "init");
+        SharedPreferences prefs = getSharedPreferences("settings", MODE_PRIVATE);
+
+        if (BuildConfig.DEBUG)
+            android.util.Log.d(TAG, "init, dim=" + prefs.getBoolean("dim", true) + " wakelock=" + prefs.getBoolean("wakelock", true));
+
         if (v == null) {
             v = new View(this);
-            v.setBackgroundColor(Color.argb(200, 0, 0, 0));
             v.setOnTouchListener(this);
         }
 
-        if (getSharedPreferences("settings", MODE_PRIVATE).getBoolean("wakelock", true)) {
+        v.setBackgroundColor(Color.argb(prefs.getBoolean("dim", true) ? 200 : 0, 0, 0, 0));
+
+        if (prefs.getBoolean("wakelock", true)) {
             p.flags = WINDOW_FLAGS | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
         } else {
             p.flags = WINDOW_FLAGS;

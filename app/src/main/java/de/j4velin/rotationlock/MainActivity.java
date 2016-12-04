@@ -3,6 +3,7 @@ package de.j4velin.rotationlock;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,12 +22,24 @@ public class MainActivity extends Activity {
         if (Build.VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(this)) {
             askForPermission();
         }
+        final SharedPreferences prefs = getSharedPreferences("settings", MODE_PRIVATE);
+
         CheckBox wakelock = (CheckBox) findViewById(R.id.wakelock);
-        wakelock.setChecked(getSharedPreferences("settings", MODE_PRIVATE).getBoolean("wakelock", true));
+        wakelock.setChecked(prefs.getBoolean("wakelock", true));
         wakelock.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(final CompoundButton compoundButton, boolean checked) {
-                getSharedPreferences("settings", MODE_PRIVATE).edit().putBoolean("wakelock", checked).apply();
+                prefs.edit().putBoolean("wakelock", checked).apply();
+                startService(new Intent(MainActivity.this, Lockservice.class));
+            }
+        });
+
+        CheckBox dim = (CheckBox) findViewById(R.id.dim);
+        dim.setChecked(prefs.getBoolean("dim", true));
+        dim.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(final CompoundButton compoundButton, boolean checked) {
+                prefs.edit().putBoolean("dim", checked).apply();
                 startService(new Intent(MainActivity.this, Lockservice.class));
             }
         });

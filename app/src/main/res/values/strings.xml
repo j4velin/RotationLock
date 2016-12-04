@@ -10,4 +10,5 @@
     <string name="wakelock">Keep screen on while locked</string>
     <string name="locked">locked</string>
     <string name="unlocked">unlocked</string>
+    <string name="dim">Dim screen while locked</string>
 </resources>
